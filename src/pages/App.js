@@ -5,7 +5,7 @@ function App() {
   return (
     <div style={{paddingBottom: "10vh"}}>
     <Head />
-    {/* <Mainland /> */}
+    <Mainland />
     </div>
   );
 }

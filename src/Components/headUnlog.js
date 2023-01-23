@@ -140,7 +140,7 @@ export default function HeadUnlog(props) {
                         payload: response.data.data,
                     })
                     await Swal.fire({
-                        title: 'Enjoy your film, ' + response.data.data.name + '!',
+                        title: response.data.data.role === "user" ? 'Enjoy your film, ' + response.data.data.name + '!' : 'Good day, ' + response.data.data.name + '!',
                         icon: 'success',
                         timer: 2000
                     })
@@ -148,7 +148,7 @@ export default function HeadUnlog(props) {
                 }};
         } catch (error) {
             await Swal.fire({
-                title: error.response.data.message.toUpperCase(),
+                title: error.response.data.message,
                 icon: 'error',
                 timer: 2000
             })
@@ -178,6 +178,7 @@ export default function HeadUnlog(props) {
                 </div>
             </div>
 
+            {/* Modal Login */}
             <Modal show={showLog} onHide={handleCloseLog}>
                 <div style={{ backgroundColor: "#212121" }}>
                     <Modal.Body>
@@ -218,6 +219,7 @@ export default function HeadUnlog(props) {
                 </div>
             </Modal>
 
+            {/* Modal Register */}
             <Modal show={showReg} onHide={handleCloseReg}>
                 <div style={{ backgroundColor: "#212121" }}>
                     <Modal.Body>

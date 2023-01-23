@@ -61,12 +61,13 @@ export default function Routings() {
       {/* Authenticated Route */}
       <Route element={<PrivateRouteUser />}>
         <Route path="/my-films" element={<MyFilmList />} />
+        <Route path="/my-films/:filmid" element={<MyFilmList />} />
         <Route path="/profile" element={<MyProfile />} />
       </Route>
 
       {/* Admin Route */}
       <Route element={<PrivateRouteAdmin />}>
-        <Route path="/add-film" element={<Addfilm />} />
+        <Route path="/modify-film/:mode" element={<Addfilm />} />
         <Route path="/trans-list" element={<Transaction />} />
       </Route>
     </Routes>

@@ -76,7 +76,7 @@ export default function Profile() {
             console.log(error)
         }
     });
-s
+
     return (
         <div className='d-flex'>
 
