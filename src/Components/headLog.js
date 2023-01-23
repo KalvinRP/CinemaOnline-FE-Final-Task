@@ -79,7 +79,7 @@ export default function HeadLog(props) {
 
                             // Dropdown Admin
                             <Dropdown.Menu variant="dark">
-                                <Dropdown.Item href="/modify-film">
+                                <Dropdown.Item href="/modify-film/add">
                                     <Container>
                                         <Row>
                                             <Col className='p-0'>
