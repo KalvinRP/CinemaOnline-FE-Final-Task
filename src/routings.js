@@ -8,6 +8,7 @@ import Detail from './pages/Detail';
 import MyFilmList from './pages/MyFilmList';
 import MyProfile from './pages/MyProfile';
 import Transaction from './pages/Transaction';
+import Verification from './pages/Verification';
 import { PrivateRouteAdmin } from './route/admin';
 import { PrivateRouteUser } from './route/user';
 
@@ -42,8 +43,7 @@ export default function Routings() {
         payload,
       });
     } catch (error) {
-      console.log(error);
-      
+      console.log("Please login!");
     }
   };
   
@@ -57,6 +57,7 @@ export default function Routings() {
       {/* Public Route */}
       <Route exact path="/" element={<App />} />
       <Route exact path="/film/:id" element={<Detail />} />
+      <Route exact path="/verify/:code" element={<Verification />} />
 
       {/* Authenticated Route */}
       <Route element={<PrivateRouteUser />}>

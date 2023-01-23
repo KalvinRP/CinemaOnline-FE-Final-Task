@@ -97,6 +97,11 @@ export default function HeadUnlog(props) {
                     setShowReg(false)
                     setShowLog(true)
                     setReg({})
+                    await Swal.fire(
+                        'Verification email sent!',
+                        'Please check your incoming messages',
+                        'success'
+                    )
                 }
             }
         } catch (error) {

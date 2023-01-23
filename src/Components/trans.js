@@ -1,8 +1,7 @@
-import { Container, Dropdown, Pagination, Table } from "react-bootstrap"
+import { useState } from "react";
+import { Container, Pagination, Table } from "react-bootstrap";
 import { useQuery } from "react-query";
 import { API } from "../config/api";
-import Arrow from "../asset/Action.png"
-import { useState } from "react";
 
 export default function Trans() {
     // GET TRANSACTION
