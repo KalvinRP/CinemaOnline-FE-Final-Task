@@ -1,4 +1,3 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Cinema Online Project
+This is the front-end code for Cinema Online Projecct. \n
 Visit the deployed website at https://cinema-o.netlify.app
