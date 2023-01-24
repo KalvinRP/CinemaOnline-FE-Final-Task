@@ -138,20 +138,20 @@ export default function Trans() {
                         <thead className="px-3">
                             <tr>
                                 <th className="py-2 text-center" style={{width:'1%'}}>No</th>
-                                <th className="py-2 text-center" style={{width:'5%'}}>Title</th>
+                                <th className="py-2 text-left" style={{width:'5%'}}>Title</th>
                                 <th className="py-2 text-center" style={{width:'5%'}}>Price</th>
                                 <th className="py-2 text-center" style={{width:'5%'}}>Sold</th>
                                 <th className="py-2 text-center" style={{width:'5%'}}>Revenue</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {revenue?.slice((target - 1) * 10, target * 10).map((orders) => (
-                                <tr key={orders.id}>
+                            {revenue?.slice((target - 1) * 10, target * 10).map((data) => (
+                                <tr key={data.id}>
                                     <td className="py-2 text-center" style={{width:'1%'}}>{(target - 1) * 10 + (no++)}</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>{revenue.title}</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>Rp {revenue.price.toLocaleString()}</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>{revenue.sold}</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>Rp {(revenue.price * revenue).toLocaleString()}</td>
+                                    <td className="py-2 text-left" style={{width:'5%'}}>{data?.title}</td>
+                                    <td className="py-2 text-center" style={{width:'5%'}}>Rp {data?.price?.toLocaleString()}</td>
+                                    <td className="py-2 text-center" style={{width:'5%'}}>{data?.sold} times</td>
+                                    <td className="py-2 text-center" style={{width:'5%'}}>Rp {(data?.price * data?.sold).toLocaleString()}</td>
                                 </tr>
                             ))}
                         </tbody>
