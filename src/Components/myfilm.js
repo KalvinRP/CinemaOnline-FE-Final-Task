@@ -5,7 +5,7 @@ import { API } from "../config/api";
 
 export default function Myfilm() {
     let { filmid } = useParams()
-    let { data: films } = useQuery('transCache', async () => {
+    let { data: films } = useQuery('transactCache', async () => {
         const response = await API.get('/own-films');
         return response.data.data;
     });

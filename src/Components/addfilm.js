@@ -464,7 +464,6 @@ export function Editfilm() {
                 if (film.image) {formData.set('image', film.image[0])}
 
                 const response = await API.patch('/films/' + id.state, formData, config)
-                console.log(response)
                 if (response.data.code === 200) {
                     await Swal.fire({
                         title: 'Successfully updating film!',
