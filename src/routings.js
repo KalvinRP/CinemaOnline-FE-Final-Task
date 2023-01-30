@@ -56,6 +56,7 @@ export default function Routings() {
     <Routes>
       {/* Public Route */}
       <Route exact path="/" element={<App />} />
+      <Route exact path="/reset/:resetcode" element={<App />} />
       <Route exact path="/film/:id" element={<Detail />} />
       <Route exact path="/verify/:code" element={<Verification />} />
 

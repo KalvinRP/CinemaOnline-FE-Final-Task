@@ -1,8 +1,8 @@
-import React, { useState } from "react";
-import { Button, Modal, Form } from 'react-bootstrap';
+import React, { useState, useEffect } from "react";
+import { Button, Modal, Form, CloseButton } from 'react-bootstrap';
 import icon from '../asset/Icon.svg';
 import '../style/custom.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation } from "react-query";
 import { API } from "../config/api";
 import Swal from "sweetalert2";
@@ -44,6 +44,71 @@ export default function HeadUnlog(props) {
         setShowReg(false)
         setShowLog(true)
     }
+
+    // Reset password
+    const [reset, setReset] = useState(false)
+    const [notsame, setNotsame] = useState(false)
+    let handleCloseReset = () => {
+        setReset(false)
+        redirect('/')
+    }
+
+    let [sure, setSure] = useState(
+        {
+            pass: "",
+            pass2: ""
+        }
+    );
+
+    let ReseTyped = (e) => {
+        setSure({
+            ...sure,
+            [e.target.name]: e.target.value,
+        });
+        if (notsame) { setNotsame(false) }
+        if (pwdError) { setPwdError(false) }
+    };
+
+    let ReseSubmitted = useMutation(async (e) => {
+        try {
+            e.preventDefault()
+            if (validPassword.test(sure.password)) {
+                if (sure.password === sure.password2) {
+                    setSure({
+                        token: resetcode,
+                        password: sure.password,
+                    })
+                    let response = await API.patch('/reset', sure)
+                    if (response.data.code === 200) {
+                        setReset(false)
+                        setSure({})
+                        await Swal.fire(
+                            'Password changed!',
+                            'Keep your password safe for yourself.',
+                            'success'
+                        )
+                    }
+                } else {
+                    setNotsame(true)
+                }
+            } else {
+                setPwdError(true)
+            }
+        }
+        catch (error) {
+            console.log(error)
+            await Swal.fire({
+                title: "Something went wrong!",
+                icon: 'warning',
+                timer: 2000
+        })
+        }
+    })
+
+    const { resetcode } = useParams()
+    useEffect(() => {
+        if (resetcode !== undefined) { setReset(true) }
+    }, [resetcode])
 
     /* FORM VALIDATION */
     const validEmail = /^[a-zA-Z0-9._:$!%-]+@[a-zA-Z0-9.-]+.[a-zA-Z]$/
@@ -116,6 +181,8 @@ export default function HeadUnlog(props) {
 
 
     // Handle Login
+    let [forget, setForget] = useState(false)
+
     let [login, setLogin] = useState(
         {
             email: "",
@@ -150,7 +217,8 @@ export default function HeadUnlog(props) {
                         timer: 2000
                     })
                     redirect('/')
-                }};
+                }
+            };
         } catch (error) {
             await Swal.fire({
                 title: error.response.data.message,
@@ -186,41 +254,81 @@ export default function HeadUnlog(props) {
             {/* Modal Login */}
             <Modal show={showLog} onHide={handleCloseLog}>
                 <div style={{ backgroundColor: "#212121" }}>
-                    <Modal.Body>
-                        <Modal.Title className='ModalText'>Login</Modal.Title>
-                        <Form>
-                            <Form.Group className="mb-3">
-                                <Form.Control
-                                    name="email"
-                                    type="email"
-                                    placeholder="Email"
-                                    onChange={LogTyped}
-                                    className='border border-secondary bg-secondary text-white'
-                                />
-                                {emailErr && <p className="text-danger">Your email is invalid</p>}
-                            </Form.Group>
-                            <Form.Group className="mb-3">
-                                <Form.Control
-                                    name="password"
-                                    type="password"
-                                    placeholder="Password"
-                                    autoComplete="current-password"
-                                    onChange={LogTyped}
-                                    className='border border-secondary bg-secondary'
-                                />
-                                {pwdError && <p className="text-danger">Your password is invalid</p>}
-                            </Form.Group>
-                        </Form>
-                        <Button className="w-100 mt-1 Button-pink" onClick={(e) => LogSubmitted.mutate(e)}>
-                            Login
-                        </Button>
-                        <div className='w-100 me-0 mt-2 pe-0 d-flex'>
-                            <p style={{ width: '45%', color: "whitesmoke" }}>Don't have an account? Click</p>
-                            <button onClick={handleSwitchReg} style={{ border: 'none', backgroundColor: 'transparent', padding: '0px' }}>
-                                <p className='fw-bold text-white'><u>here.</u></p>
-                            </button>
-                        </div>
-                    </Modal.Body>
+                    {forget ?
+                        <Modal.Body>
+                            <div className="d-flex justify-content-between">
+                                <Modal.Title className='ModalText'>Reset Password</Modal.Title>
+                                <button onClick={() => setForget(false)} style={{ border: 'none', backgroundColor: 'transparent', padding: '0px' }}>
+                                    <p className='fw-bold text-white'>Back to Login</p>
+                                </button>
+                            </div>
+                            <Form>
+                                <Form.Group className="mb-3">
+                                    <Form.Control
+                                        name="email"
+                                        type="email"
+                                        value={login.email}
+                                        placeholder="Type Your email here."
+                                        onChange={LogTyped}
+                                        className='border border-secondary bg-secondary text-white'
+                                    />
+                                    {emailErr && <p className="text-danger">Your email is invalid</p>}
+                                </Form.Group>
+                            </Form>
+                            <Button className="w-100 mt-1 Button-pink" onClick={(e) => LogSubmitted.mutate(e)}>
+                                Login
+                            </Button>
+                            <div className='w-100 me-0 mt-2 pe-0 d-flex'>
+                                <p style={{ width: '45%', color: "whitesmoke" }}>Don't have an account? Click</p>
+                                <button onClick={handleSwitchReg} style={{ border: 'none', backgroundColor: 'transparent', padding: '0px' }}>
+                                    <p className='fw-bold text-white'><u>here.</u></p>
+                                </button>
+                            </div>
+                        </Modal.Body>
+                        :
+                        <Modal.Body>
+                            <Modal.Title className='ModalText'>Login</Modal.Title>
+                            <Form>
+                                <Form.Group className="mb-3">
+                                    <Form.Control
+                                        name="email"
+                                        type="email"
+                                        value={login.email}
+                                        placeholder="Email"
+                                        onChange={LogTyped}
+                                        className='border border-secondary bg-secondary text-white'
+                                    />
+                                    {emailErr && <p className="text-danger">Your email is invalid</p>}
+                                </Form.Group>
+                                <Form.Group className="mb-3">
+                                    <Form.Control
+                                        name="password"
+                                        type="password"
+                                        value={login.password}
+                                        placeholder="Password"
+                                        autoComplete="current-password"
+                                        onChange={LogTyped}
+                                        className='border border-secondary bg-secondary'
+                                    />
+                                    {pwdError && <p className="text-danger">Your password is invalid</p>}
+                                </Form.Group>
+                            </Form>
+                            <Button className="w-100 mt-1 Button-pink" onClick={(e) => LogSubmitted.mutate(e)}>
+                                Login
+                            </Button>
+                            <div className="w-100 d-flex justify-content-end">
+                                <button onClick={() => setForget(true)} style={{ border: 'none', backgroundColor: 'transparent', padding: '0px' }}>
+                                    <p className='fw-bold text-white'><u>Forget Password?</u></p>
+                                </button>
+                            </div>
+                            <div className='w-100 me-0 pe-0 d-flex'>
+                                <p style={{ width: '45%', color: "whitesmoke" }}>Don't have an account? Click</p>
+                                <button onClick={handleSwitchReg} style={{ border: 'none', backgroundColor: 'transparent', padding: '0px' }}>
+                                    <p className='fw-bold text-white'><u>here.</u></p>
+                                </button>
+                            </div>
+                        </Modal.Body>
+                    }
                 </div>
             </Modal>
 
@@ -270,6 +378,56 @@ export default function HeadUnlog(props) {
                                 </button>
                             </div>
                         </Form>
+                    </Modal.Body>
+                </div>
+            </Modal>
+
+            {/* Modal Reset */}
+            <Modal
+                show={reset}
+                onHide={handleCloseReset}
+                backdrop="static"
+                keyboard={false}
+            >
+                <div style={{ backgroundColor: "#212121" }}>
+                    <Modal.Header>
+                        <div className="w-100 d-flex justify-content-between">
+                            <Modal.Title style={{ fontWeight: "bold", fontSize: "2em", color: "#CD2E71" }}>Reset Password</Modal.Title>
+                            <CloseButton variant="white" onClick={handleCloseReset} />
+                        </div>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Form>
+                            <Form.Group className="mb-3">
+                                <Form.Control
+                                    name="password"
+                                    type="password"
+                                    placeholder="Input your new password."
+                                    onChange={ReseTyped}
+                                    className='border border-secondary bg-secondary text-white'
+                                />
+                                {pwdError && <p className="text-danger">Your password is invalid</p>}
+                            </Form.Group>
+                            <Form.Group className="mb-3">
+                                <Form.Control
+                                    name="password2"
+                                    type="password"
+                                    placeholder="Confirm your password."
+                                    onChange={ReseTyped}
+                                    className='border border-secondary bg-secondary text-white'
+                                />
+                                {notsame && <p className="text-danger">The email you input is different.</p>}
+                            </Form.Group>
+                        </Form>
+                        <Button className="w-100 mt-1 Button-pink" onClick={(e) => ReseSubmitted(e)}>
+                            Create New Password
+                        </Button>
+                        <div className='w-100 me-0 mt-2 pe-0 d-flex'>
+                            <p style={{ width: '45%', color: "whitesmoke" }}>Don't have an account? Click</p>
+                            <button onClick={handleSwitchReg} style={{ border: 'none', backgroundColor: 'transparent', padding: '0px' }}>
+                                <p className='fw-bold text-white'><u>here.</u></p>
+                            </button>
+                        </div>
                     </Modal.Body>
                 </div>
             </Modal>
