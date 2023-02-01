@@ -55,8 +55,15 @@ export default function HeadUnlog(props) {
 
     let [sure, setSure] = useState(
         {
-            pass: "",
-            pass2: ""
+            password: "",
+            password2: ""
+        }
+    );
+
+    let [resetform, setResetform] = useState(
+        {
+            token: "",
+            password: ""
         }
     );
 
@@ -67,33 +74,64 @@ export default function HeadUnlog(props) {
         });
         if (notsame) { setNotsame(false) }
         if (pwdError) { setPwdError(false) }
+        console.log(sure)
     };
+
+    let ForgetSubmitted = useMutation(async (e) => {
+        try {
+            e.preventDefault()
+            let response = await API.post('/forget', login)
+            if (response.data.code === 200) {
+                setForget(false)
+                setLogin({
+                    email: "",
+                })
+                await Swal.fire(
+                    "We send an email for you.",
+                    "Please confirm and create your new password.",
+                    "info"
+                )
+                redirect('/')
+            };
+        } catch (error) {
+            await Swal.fire({
+                title: error.response.data.message,
+                icon: 'error',
+                timer: 2000
+            })
+        }
+    });
+
+    let samevalue = () => {
+        setResetform({
+            ...resetform,
+            password: sure.password,
+        })
+        return sure.password === sure.password2
+    }
 
     let ReseSubmitted = useMutation(async (e) => {
         try {
             e.preventDefault()
-            if (validPassword.test(sure.password)) {
-                if (sure.password === sure.password2) {
-                    setSure({
-                        token: resetcode,
-                        password: sure.password,
-                    })
-                    let response = await API.patch('/reset', sure)
+            if (samevalue()) {
+                if (validPassword.test(sure.password)) {
+                    let response = await API.patch('/reset', resetform)
                     if (response.data.code === 200) {
                         setReset(false)
                         setSure({})
+                        setResetform({})
                         await Swal.fire(
                             'Password changed!',
                             'Keep your password safe for yourself.',
                             'success'
                         )
+                        redirect('/')
                     }
-                } else {
-                    setNotsame(true)
                 }
-            } else {
+            else {
                 setPwdError(true)
-            }
+            }}
+            else { setNotsame(true) }
         }
         catch (error) {
             console.log(error)
@@ -101,13 +139,15 @@ export default function HeadUnlog(props) {
                 title: "Something went wrong!",
                 icon: 'warning',
                 timer: 2000
-        })
+            })
         }
     })
 
     const { resetcode } = useParams()
     useEffect(() => {
-        if (resetcode !== undefined) { setReset(true) }
+        if (resetcode !== undefined) {
+            setReset(true)
+        }
     }, [resetcode])
 
     /* FORM VALIDATION */
@@ -186,7 +226,6 @@ export default function HeadUnlog(props) {
     let [login, setLogin] = useState(
         {
             email: "",
-            password: "",
         }
     );
 
@@ -275,8 +314,8 @@ export default function HeadUnlog(props) {
                                     {emailErr && <p className="text-danger">Your email is invalid</p>}
                                 </Form.Group>
                             </Form>
-                            <Button className="w-100 mt-1 Button-pink" onClick={(e) => LogSubmitted.mutate(e)}>
-                                Login
+                            <Button className="w-100 mt-1 Button-pink" onClick={(e) => ForgetSubmitted.mutate(e)}>
+                                Change Password
                             </Button>
                             <div className='w-100 me-0 mt-2 pe-0 d-flex'>
                                 <p style={{ width: '45%', color: "whitesmoke" }}>Don't have an account? Click</p>
@@ -419,7 +458,7 @@ export default function HeadUnlog(props) {
                                 {notsame && <p className="text-danger">The email you input is different.</p>}
                             </Form.Group>
                         </Form>
-                        <Button className="w-100 mt-1 Button-pink" onClick={(e) => ReseSubmitted(e)}>
+                        <Button className="w-100 mt-1 Button-pink" onClick={(e) => ReseSubmitted.mutate(e)}>
                             Create New Password
                         </Button>
                         <div className='w-100 me-0 mt-2 pe-0 d-flex'>

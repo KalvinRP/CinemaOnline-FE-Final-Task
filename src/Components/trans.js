@@ -25,22 +25,8 @@ export default function Trans() {
         let Minute = string.getMinutes()
         if (Minute < 10) { Minute = '0' + string.getMinutes() }
         const date = `${LocalMonth[string.getMonth()]} ${string.getDate()}, ${string.getFullYear()} ${Hour}:${Minute}`
-
+        
         return date
-    }
-
-    // PAGINATION
-    let [target, setTarget] = useState(1)
-    let [ellipse, setEllipse] = useState(0)
-
-    let items = [];
-    let page = Math.ceil(records?.length / 10)
-    for (let number = 1 + (ellipse * 5); number <= (1 + ellipse) * 5; number++) {
-        items.push(
-            <Pagination.Item style={{ width: '3vw', textAlign: 'center', fontWeight: 'bold' }} key={number} active={number === target} disabled={page < number} onClick={() => setTarget(number)}>
-                {number}
-            </Pagination.Item>
-        );
     }
 
     // eslint-disable-next-line
@@ -51,6 +37,20 @@ export default function Trans() {
         { name: 'Users', value: 'Users' },
         { name: 'Films', value: 'Films' },
     ];
+
+    // PAGINATION
+    let [target, setTarget] = useState(1)
+    let [ellipse, setEllipse] = useState(0)
+
+    let items = [];
+    let page = radioValue === "Users" ? Math.ceil(records?.length / 10) : Math.ceil(revenue?.length/10)
+    for (let number = 1 + (ellipse * 5); number <= (1 + ellipse) * 5; number++) {
+        items.push(
+            <Pagination.Item style={{ width: '3vw', textAlign: 'center', fontWeight: 'bold' }} key={number} active={number === target} disabled={page < number} onClick={() => setTarget(number)}>
+                {number}
+            </Pagination.Item>
+        );
+    }
 
     return (
         <>
@@ -68,7 +68,7 @@ export default function Trans() {
                                     name="radio"
                                     value={radio.value}
                                     checked={radioValue === radio.value}
-                                    onChange={(e) => setRadioValue(e.currentTarget.value)}
+                                    onChange={(e) => {setRadioValue(e.currentTarget.value); setTarget(1)}}
                                     style={{ height: '80%' }}
                                 >
                                     {radio.name}
@@ -90,8 +90,8 @@ export default function Trans() {
                             {records?.slice((target - 1) * 10, target * 10).map((orders) => (
                                 <tr key={orders.id}>
                                     <td className="py-2 text-center" style={{width:'1%'}}>{(target - 1) * 10 + (no++)}</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>{orders.users.Name}</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>{orders.films.title}</td>
+                                    <td className="py-2 text-center" style={{width:'5%'}}>{orders.users.Name.slice(0, 20)}{orders.users.Name.length > 20 ? '...' : null}</td>
+                                    <td className="py-2 text-center" style={{width:'5%'}}>{orders.films.title.slice(0, 25)}{orders.films.title.length > 25 ? '...' : null}</td>
                                     <td className="py-2 text-center" style={{width:'5%'}}>{Dating(`${orders.buydate}`)}</td>
                                     {
                                         orders.status === "pending" ?
@@ -148,7 +148,7 @@ export default function Trans() {
                             {revenue?.slice((target - 1) * 10, target * 10).map((data) => (
                                 <tr key={data.id}>
                                     <td className="py-2 text-center" style={{width:'1%'}}>{(target - 1) * 10 + (no++)}</td>
-                                    <td className="py-2 text-left" style={{width:'5%'}}>{data?.title}</td>
+                                    <td className="py-2 text-left" style={{width:'5%'}}>{data?.title.slice(0, 25)}{data?.title.length > 25 ? '...' : null}</td>
                                     <td className="py-2 text-center" style={{width:'5%'}}>Rp {data?.price?.toLocaleString()}</td>
                                     <td className="py-2 text-center" style={{width:'5%'}}>{data?.sold} times</td>
                                     <td className="py-2 text-center" style={{width:'5%'}}>Rp {(data?.price * data?.sold).toLocaleString()}</td>
