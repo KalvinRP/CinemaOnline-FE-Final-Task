@@ -615,7 +615,6 @@ export function Editfilm() {
                         <Form.Select value={film?.status || ''} name="status" onChange={FilmTyped} style={{ backgroundColor: '#474747', color: "white" }}>
                             <option>Type of Post</option>
                             <option value="reg">Regular Post</option>
-                            <option value="new">Hot Post</option>
                             <option value="ad">Advertised Post</option>
                         </Form.Select>
                     </Form.Group>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Container, Pagination, Table, ButtonGroup, ToggleButton } from "react-bootstrap";
+import { Container, Pagination, Table, ButtonGroup, ToggleButton, Tooltip, OverlayTrigger } from "react-bootstrap";
 import { useQuery } from "react-query";
 import { API } from "../config/api";
 
@@ -25,7 +25,7 @@ export default function Trans() {
         let Minute = string.getMinutes()
         if (Minute < 10) { Minute = '0' + string.getMinutes() }
         const date = `${LocalMonth[string.getMonth()]} ${string.getDate()}, ${string.getFullYear()} ${Hour}:${Minute}`
-        
+
         return date
     }
 
@@ -43,7 +43,7 @@ export default function Trans() {
     let [ellipse, setEllipse] = useState(0)
 
     let items = [];
-    let page = radioValue === "Users" ? Math.ceil(records?.length / 10) : Math.ceil(revenue?.length/10)
+    let page = radioValue === "Users" ? Math.ceil(records?.length / 10) : Math.ceil(revenue?.length / 10)
     for (let number = 1 + (ellipse * 5); number <= (1 + ellipse) * 5; number++) {
         items.push(
             <Pagination.Item style={{ width: '3vw', textAlign: 'center', fontWeight: 'bold' }} key={number} active={number === target} disabled={page < number} onClick={() => setTarget(number)}>
@@ -68,7 +68,7 @@ export default function Trans() {
                                     name="radio"
                                     value={radio.value}
                                     checked={radioValue === radio.value}
-                                    onChange={(e) => {setRadioValue(e.currentTarget.value); setTarget(1)}}
+                                    onChange={(e) => { setRadioValue(e.currentTarget.value); setTarget(1) }}
                                     style={{ height: '80%' }}
                                 >
                                     {radio.name}
@@ -79,26 +79,48 @@ export default function Trans() {
                     <Table variant="dark" className="mt-4" striped>
                         <thead className="px-3">
                             <tr>
-                                <th className="py-2 text-center" style={{width:'1%'}}>No</th>
-                                <th className="py-2 text-center" style={{width:'5%'}}>Users</th>
-                                <th className="py-2 text-center" style={{width:'5%'}}>Film</th>
-                                <th className="py-2 text-center" style={{width:'5%'}}>Order Date</th>
-                                <th className="py-2 text-center" style={{width:'5%'}}>Status Payment</th>
+                                <th className="py-2 text-center" style={{ width: '1%' }}>No</th>
+                                <th className="py-2 text-center" style={{ width: '5%' }}>Users</th>
+                                <th className="py-2 text-center" style={{ width: '5%' }}>Film</th>
+                                <th className="py-2 text-center" style={{ width: '5%' }}>Order Date</th>
+                                <th className="py-2 text-center" style={{ width: '5%' }}>Status Payment</th>
                             </tr>
                         </thead>
                         <tbody>
                             {records?.slice((target - 1) * 10, target * 10).map((orders) => (
                                 <tr key={orders.id}>
-                                    <td className="py-2 text-center" style={{width:'1%'}}>{(target - 1) * 10 + (no++)}</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>{orders.users.Name.slice(0, 20)}{orders.users.Name.length > 20 ? '...' : null}</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>{orders.films.title.slice(0, 25)}{orders.films.title.length > 25 ? '...' : null}</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>{Dating(`${orders.buydate}`)}</td>
+                                    <td className="py-2 text-center" style={{ width: '1%' }}>{(target - 1) * 10 + (no++)}</td>
+                                    {
+                                        <OverlayTrigger
+                                            placement="auto"
+                                            overlay={
+                                                <Tooltip id={"tooltip-auto"}>
+                                                    {orders.users.Name}
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <td className="py-2 text-center" style={{ width: '5%' }}>{orders.users.Name.slice(0, 20)}{orders.users.Name.length > 20 ? '...' : null}</td>
+                                        </OverlayTrigger>
+                                    }
+                                    {
+                                        <OverlayTrigger
+                                            placement="auto"
+                                            overlay={
+                                                <Tooltip id={"tooltip-auto"}>
+                                                    {orders.films.title}
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <td className="py-2 text-center" style={{ width: '5%' }}>{orders.films.title.slice(0, 25)}{orders.films.title.length > 25 ? '...' : null}</td>
+                                        </OverlayTrigger>
+                                    }
+                                    <td className="py-2 text-center" style={{ width: '5%' }}>{Dating(`${orders.buydate}`)}</td>
                                     {
                                         orders.status === "pending" ?
-                                            <td className="py-2 fw-bold text-center text-warning" style={{width:'5%'}}>Pending</td> :
+                                            <td className="py-2 fw-bold text-center text-warning" style={{ width: '5%' }}>Pending</td> :
                                             orders.status === "success" ?
-                                                <td className="py-2 fw-bold text-center text-success" style={{width:'5%'}}>Approved</td> :
-                                                <td className="py-2 fw-bold text-center text-secondary" style={{width:'5%'}}>Failed</td>
+                                                <td className="py-2 fw-bold text-center text-success" style={{ width: '5%' }}>Approved</td> :
+                                                <td className="py-2 fw-bold text-center text-secondary" style={{ width: '5%' }}>Failed</td>
                                     }
                                 </tr>
                             ))}
@@ -114,7 +136,7 @@ export default function Trans() {
                 </Container>
                 :
                 <Container className="mt-1 w-75">
-                                        <div className="d-flex justify-content-between">
+                    <div className="d-flex justify-content-between">
                         <h1 className="text-white">All Transactions</h1>
                         <ButtonGroup>
                             {radios.map((radio, idx) => (
@@ -137,21 +159,32 @@ export default function Trans() {
                     <Table variant="dark" className="mt-4" striped>
                         <thead className="px-3">
                             <tr>
-                                <th className="py-2 text-center" style={{width:'1%'}}>No</th>
-                                <th className="py-2 text-left" style={{width:'5%'}}>Title</th>
-                                <th className="py-2 text-center" style={{width:'5%'}}>Price</th>
-                                <th className="py-2 text-center" style={{width:'5%'}}>Sold</th>
-                                <th className="py-2 text-center" style={{width:'5%'}}>Revenue</th>
+                                <th className="py-2 text-center" style={{ width: '1%' }}>No</th>
+                                <th className="py-2 text-left" style={{ width: '5%' }}>Title</th>
+                                <th className="py-2 text-center" style={{ width: '5%' }}>Price</th>
+                                <th className="py-2 text-center" style={{ width: '5%' }}>Sold</th>
+                                <th className="py-2 text-center" style={{ width: '5%' }}>Revenue</th>
                             </tr>
                         </thead>
                         <tbody>
                             {revenue?.slice((target - 1) * 10, target * 10).map((data) => (
                                 <tr key={data.id}>
-                                    <td className="py-2 text-center" style={{width:'1%'}}>{(target - 1) * 10 + (no++)}</td>
-                                    <td className="py-2 text-left" style={{width:'5%'}}>{data?.title.slice(0, 25)}{data?.title.length > 25 ? '...' : null}</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>Rp {data?.price?.toLocaleString()}</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>{data?.sold} times</td>
-                                    <td className="py-2 text-center" style={{width:'5%'}}>Rp {(data?.price * data?.sold).toLocaleString()}</td>
+                                    <td className="py-2 text-center" style={{ width: '1%' }}>{(target - 1) * 10 + (no++)}</td>
+                                    {
+        <OverlayTrigger
+          placement="auto"
+          overlay={
+            <Tooltip id={"tooltip-auto"}>
+              {data?.title}
+            </Tooltip>
+          }
+        >
+          <td className="py-2 text-left" style={{ width: '5%' }}>{data?.title.slice(0, 25)}{data?.title.length > 25 ? '...' : null}</td>
+        </OverlayTrigger>
+      }
+                                    <td className="py-2 text-center" style={{ width: '5%' }}>Rp {data?.price?.toLocaleString()}</td>
+                                    <td className="py-2 text-center" style={{ width: '5%' }}>{data?.sold} times</td>
+                                    <td className="py-2 text-center" style={{ width: '5%' }}>Rp {(data?.price * data?.sold).toLocaleString()}</td>
                                 </tr>
                             ))}
                         </tbody>
