@@ -1,10 +1,10 @@
-import React, { memo } from "react";
+import React from "react";
 import HeadLog from "./headLog";
 import HeadUnlog from "./headUnlog";
 import { useContext } from "react";
 import { UserContext } from "../context/userContext"
 
-function Head() {
+export default function Head() {
     const [state, dispatch] = useContext(UserContext);
   
     return (
@@ -13,5 +13,3 @@ function Head() {
       </>
     )
   };
-
-export default memo(Head);

@@ -179,7 +179,7 @@ export default function Trans() {
             </Tooltip>
           }
         >
-          <td className="py-2 text-left" style={{ width: '5%' }}>{data?.title.slice(0, 25)}{data?.title.length > 25 ? '...' : null}</td>
+          <td className="py-2 text-left" style={{ width: '5%' }}>{data?.title.slice(0, 25)}{data?.title.length > 25 && '...'}</td>
         </OverlayTrigger>
       }
                                     <td className="py-2 text-center" style={{ width: '5%' }}>Rp {data?.price?.toLocaleString()}</td>

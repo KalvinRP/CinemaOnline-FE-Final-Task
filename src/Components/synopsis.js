@@ -42,6 +42,7 @@ export default function Synopsis() {
                 token: film.token
             });
         }
+        console.log(film)
         // eslint-disable-next-line
     }, [film]);
 

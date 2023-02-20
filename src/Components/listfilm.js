@@ -1,10 +1,10 @@
-import React, { memo, useState } from "react";
+import React, { useState } from "react";
 import { Accordion, Card, useAccordionButton } from "react-bootstrap";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { API } from "../config/api";
 
-function Listfilms() {
+export default function Listfilms() {
     let { data: recommendation } = useQuery('manyfilmCache', async () => {
         const response = await API.get('/films');
         return response.data.data;
@@ -83,5 +83,3 @@ function CustomToggle({ children, eventKey }) {
       </button>
     );
   }
-
-export default memo(Listfilms)

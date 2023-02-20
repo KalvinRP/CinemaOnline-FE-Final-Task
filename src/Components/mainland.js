@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Button, Card } from "react-bootstrap";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { ThreeCircles } from "react-loader-spinner";
@@ -21,10 +21,10 @@ export default function Mainland() {
         else { setShow(show - 1) }
     }
 
-    const add = () => {
+    const add = useCallback(() => {
         if (show === length) { setShow(0) }
         else { setShow(show + 1) }
-    }
+    }, [show])
 
     useEffect(() => {
         let interval = setInterval(() => {
